@@ -16,13 +16,16 @@
  */
 package toniarts.openkeeper.game.component;
 
+import com.jme3.network.serializing.serializers.FieldSerializer;
 import com.simsilica.es.EntityComponent;
+import toniarts.openkeeper.game.network.Transferable;
 
 /**
  * Entity efficiency, for working etc.
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(FieldSerializer.class)
 public class CreatureEfficiency implements EntityComponent {
 
     public int efficiencyPercentage;

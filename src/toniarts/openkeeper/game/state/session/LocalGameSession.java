@@ -40,6 +40,7 @@ import toniarts.openkeeper.tools.convert.map.Player;
 import toniarts.openkeeper.tools.convert.map.TriggerAction;
 import toniarts.openkeeper.utils.PathUtils;
 import toniarts.openkeeper.utils.Utils;
+import toniarts.openkeeper.view.selection.SelectionArea;
 
 /**
  * Local game session, a virtual server
@@ -282,23 +283,23 @@ public class LocalGameSession implements GameSessionServerService, GameSessionCl
     }
 
     @Override
-    public void selectTiles(Vector2f start, Vector2f end, boolean select) {
+    public void selectTiles(SelectionArea area) {
         for (GameSessionServiceListener listener : serverListeners.getArray()) {
-            listener.onSelectTiles(start, end, select, PLAYER_ID);
+            listener.onSelectTiles(area, PLAYER_ID);
         }
     }
 
     @Override
-    public void build(Vector2f start, Vector2f end, short roomId) {
+    public void build(SelectionArea area, short roomId) {
         for (GameSessionServiceListener listener : serverListeners.getArray()) {
-            listener.onBuild(start, end, roomId, PLAYER_ID);
+            listener.onBuild(area, roomId, PLAYER_ID);
         }
     }
 
     @Override
-    public void sell(Vector2f start, Vector2f end) {
+    public void sell(SelectionArea area) {
         for (GameSessionServiceListener listener : serverListeners.getArray()) {
-            listener.onSell(start, end, PLAYER_ID);
+            listener.onSell(area, PLAYER_ID);
         }
     }
 

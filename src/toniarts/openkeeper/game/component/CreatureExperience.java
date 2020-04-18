@@ -16,13 +16,16 @@
  */
 package toniarts.openkeeper.game.component;
 
+import com.jme3.network.serializing.serializers.FieldSerializer;
 import com.simsilica.es.EntityComponent;
+import toniarts.openkeeper.game.network.Transferable;
 
 /**
  * Creature experience level stuff
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(FieldSerializer.class)
 public class CreatureExperience implements EntityComponent {
 
     public int level;

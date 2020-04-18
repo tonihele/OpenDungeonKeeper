@@ -16,14 +16,17 @@
  */
 package toniarts.openkeeper.game.component;
 
+import com.jme3.network.serializing.serializers.FieldSerializer;
 import com.simsilica.es.EntityComponent;
 import com.simsilica.es.EntityId;
+import toniarts.openkeeper.game.network.Transferable;
 
 /**
  * Marks that entity is attacking a target
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(FieldSerializer.class)
 public class AttackTarget implements EntityComponent {
 
     public EntityId entityId;

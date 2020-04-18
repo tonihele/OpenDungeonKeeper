@@ -21,13 +21,16 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
+import com.jme3.network.serializing.serializers.FieldSerializer;
 import java.io.IOException;
+import toniarts.openkeeper.game.network.Transferable;
 
 /**
  * Represents a researchable item such as keeper spell, room, trap, etc
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(FieldSerializer.class)
 public class ResearchableEntity implements Savable {
 
     protected short id;

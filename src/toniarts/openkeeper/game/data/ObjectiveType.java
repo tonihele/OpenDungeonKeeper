@@ -16,11 +16,15 @@
  */
 package toniarts.openkeeper.game.data;
 
+import com.jme3.network.serializing.serializers.EnumSerializer;
+import toniarts.openkeeper.game.network.Transferable;
+
 /**
  * Player objective for a target
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(EnumSerializer.class)
 public enum ObjectiveType {
 
     KILL, IMPRISON, CONVERT;

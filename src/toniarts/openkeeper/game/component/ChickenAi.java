@@ -16,14 +16,17 @@
  */
 package toniarts.openkeeper.game.component;
 
+import com.jme3.network.serializing.serializers.FieldSerializer;
 import com.simsilica.es.EntityComponent;
 import toniarts.openkeeper.game.controller.chicken.ChickenState;
+import toniarts.openkeeper.game.network.Transferable;
 
 /**
  * Simple chicken AI component
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(FieldSerializer.class)
 public class ChickenAi implements EntityComponent {
 
     public double stateStartTime;

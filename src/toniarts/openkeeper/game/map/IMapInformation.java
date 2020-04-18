@@ -19,6 +19,7 @@ package toniarts.openkeeper.game.map;
 import java.awt.Point;
 import java.util.List;
 import toniarts.openkeeper.tools.convert.map.Terrain;
+import toniarts.openkeeper.view.selection.SelectionArea;
 
 /**
  * A kind of a map container with no editing functionalities
@@ -147,4 +148,7 @@ public interface IMapInformation {
      */
     public boolean isLava(Point p);
 
+    public boolean isSellable(SelectionArea selectionArea, short playerId);
+
+    public boolean isBuildable(SelectionArea selectionArea, short playerId, short roomId);
 }

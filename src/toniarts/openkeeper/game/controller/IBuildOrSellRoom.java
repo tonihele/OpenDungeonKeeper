@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 OpenKeeper
+ * Copyright (C) 2014-2020 OpenKeeper
  *
  * OpenKeeper is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,29 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenKeeper.  If not, see <http://www.gnu.org/licenses/>.
  */
-package toniarts.openkeeper.game.component;
+package toniarts.openkeeper.game.controller;
 
-import com.jme3.network.serializing.serializers.FieldSerializer;
-import com.simsilica.es.EntityComponent;
-import com.simsilica.es.EntityId;
-import toniarts.openkeeper.game.network.Transferable;
+import java.awt.Point;
+import java.util.Set;
 
 /**
- * Marks entity to be hauled/dragged by another entity
  *
- * @author Toni Helenius <helenius.toni@gmail.com>
+ * @author ArchDemon
  */
-@Transferable(FieldSerializer.class)
-public class HauledBy implements EntityComponent {
+public interface IBuildOrSellRoom {
 
-    public EntityId entityId;
+    public void build(Set<Point> points, short playerId, short roomId);
 
-    public HauledBy() {
-        // For serialization
-    }
-
-    public HauledBy(EntityId entityId) {
-        this.entityId = entityId;
-    }
-
+    public void sell(Set<Point> points, short playerId);
 }

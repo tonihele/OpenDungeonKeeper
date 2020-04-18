@@ -16,6 +16,7 @@
  */
 package toniarts.openkeeper.game.controller.room;
 
+import com.jme3.network.serializing.serializers.EnumSerializer;
 import com.simsilica.es.EntityId;
 import java.awt.Point;
 import java.util.Collections;
@@ -27,6 +28,7 @@ import java.util.Set;
 import toniarts.openkeeper.common.RoomInstance;
 import toniarts.openkeeper.game.controller.IObjectsController;
 import toniarts.openkeeper.game.controller.room.storage.IRoomObjectControl;
+import toniarts.openkeeper.game.network.Transferable;
 import toniarts.openkeeper.tools.convert.map.KwdFile;
 import toniarts.openkeeper.tools.convert.map.Room;
 
@@ -40,6 +42,7 @@ public abstract class AbstractRoomController implements IRoomController {
     /**
      * The type of object the room houses
      */
+    @Transferable(EnumSerializer.class)
     public enum ObjectType {
 
         GOLD, LAIR, SPELL_BOOK, RESEARCHER, PRISONER, TORTUREE, FOOD;

@@ -21,6 +21,7 @@ import com.jme3.network.service.rmi.Asynchronous;
 import com.simsilica.es.EntityId;
 import java.awt.Point;
 import toniarts.openkeeper.game.state.CheatState;
+import toniarts.openkeeper.view.selection.SelectionArea;
 
 /**
  * Listener for the service. To listen to clients' requests
@@ -32,34 +33,30 @@ public interface GameSessionServiceListener {
     /**
      * Build a building to the wanted area
      *
-     * @param start start coordinates
-     * @param end end coordinates
+     * @param area
      * @param roomId room to build
      * @param playerId the player who builds the room
      */
     @Asynchronous
-    public void onBuild(Vector2f start, Vector2f end, short roomId, short playerId);
+    public void onBuild(SelectionArea area, short roomId, short playerId);
 
     /**
      * Sell building(s) from the wanted area
      *
-     * @param start start coordinates
-     * @param end end coordinates
+     * @param area
      * @param playerId the player who sells the tile
      */
     @Asynchronous
-    public void onSell(Vector2f start, Vector2f end, short playerId);
+    public void onSell(SelectionArea area, short playerId);
 
     /**
      * Set some tiles selected/undelected
      *
-     * @param start start coordinates
-     * @param end end coordinates
-     * @param select select or unselect
+     * @param area
      * @param playerId the player who selected the tile
      */
     @Asynchronous
-    public void onSelectTiles(Vector2f start, Vector2f end, boolean select, short playerId);
+    public void onSelectTiles(SelectionArea area, short playerId);
 
     /**
      * Player wants to interact with an entity

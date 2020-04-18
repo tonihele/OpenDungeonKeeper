@@ -55,7 +55,7 @@ public abstract class SelectionHandler {
 
     public SelectionHandler(Main app) {
         this.app = app;
-        this.selectionArea = new SelectionArea(MapLoader.TILE_WIDTH);
+        this.selectionArea = new SelectionArea();
 
         setupVisualsForSelection();
     }
@@ -74,11 +74,11 @@ public abstract class SelectionHandler {
         Vector3f tmp = cam.getWorldCoordinates(this.mousePosition, 0f).clone();
         Vector3f dir = cam.getWorldCoordinates(this.mousePosition, 1f).subtractLocal(tmp).normalizeLocal();
         dir.multLocal((MapLoader.TOP_HEIGHT - pos.getY()) / dir.getY()).addLocal(pos);
-        
+
         pointedPosition.set(dir.getX(), dir.getZ());
         pointedTileIndex = WorldUtils.vectorToPoint(pointedPosition);
         pointedTilePosition = WorldUtils.pointToVector2f(pointedTileIndex);
-        
+
         setPos(pointedTilePosition);
 
         return true;
@@ -101,7 +101,7 @@ public abstract class SelectionHandler {
     public Point getPointedTileIndex() {
         return pointedTileIndex;
     }
-    
+
     /**
      * Show coordinate of tile pointed by mouse
      *

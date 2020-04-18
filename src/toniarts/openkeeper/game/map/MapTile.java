@@ -22,11 +22,13 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
 import com.jme3.math.FastMath;
+import com.jme3.network.serializing.serializers.FieldSerializer;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
+import toniarts.openkeeper.game.network.Transferable;
 import toniarts.openkeeper.tools.convert.map.Terrain;
 import toniarts.openkeeper.tools.convert.map.Tile;
 import toniarts.openkeeper.tools.convert.map.Tile.BridgeTerrainType;
@@ -36,6 +38,7 @@ import toniarts.openkeeper.tools.convert.map.Tile.BridgeTerrainType;
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(FieldSerializer.class)
 public class MapTile implements Savable {
 
     private Map<Short, Boolean> selection = new HashMap<>();

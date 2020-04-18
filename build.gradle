@@ -68,6 +68,7 @@ dependencies {
     implementation "com.simsilica:zay-es-net:1.4.2"
     implementation "com.simsilica:sio2:1.3.0"
     implementation "com.simsilica:sim-ethereal:1.5.0"
+    implementation "org.reflections:reflections:0.9.11"
 }
 
 sourceSets {

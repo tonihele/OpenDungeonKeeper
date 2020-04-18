@@ -16,11 +16,13 @@
  */
 package toniarts.openkeeper.tools.convert.map;
 
+import com.jme3.network.serializing.serializers.EnumSerializer;
 import java.util.EnumSet;
 import java.util.List;
 import javax.vecmath.Vector3f;
 import toniarts.openkeeper.game.data.IIndexable;
 import toniarts.openkeeper.game.data.ITriggerable;
+import toniarts.openkeeper.game.network.Transferable;
 import toniarts.openkeeper.tools.convert.IFlagEnum;
 import toniarts.openkeeper.tools.convert.IValueEnum;
 import toniarts.openkeeper.tools.convert.map.Thing.HeroParty.Objective;
@@ -716,6 +718,7 @@ public abstract class Thing {
          * unify these, just add a boolean whether it is available to parties
          * only
          */
+        @Transferable(EnumSerializer.class)
         public enum Objective implements IValueEnum {
 
             NONE(0),

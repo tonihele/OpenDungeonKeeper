@@ -47,6 +47,7 @@ import toniarts.openkeeper.game.state.session.GameSession;
 import toniarts.openkeeper.game.state.session.GameSessionClientService;
 import toniarts.openkeeper.game.state.session.GameSessionListener;
 import toniarts.openkeeper.tools.convert.map.TriggerAction;
+import toniarts.openkeeper.view.selection.SelectionArea;
 
 /**
  * Client side service for the game lobby services
@@ -139,18 +140,18 @@ public class GameClientService extends AbstractClientService
     }
 
     @Override
-    public void selectTiles(Vector2f start, Vector2f end, boolean select) {
-        getDelegate().selectTiles(start, end, select);
+    public void selectTiles(SelectionArea area) {
+        getDelegate().selectTiles(area);
     }
 
     @Override
-    public void build(Vector2f start, Vector2f end, short roomId) {
-        getDelegate().build(start, end, roomId);
+    public void build(SelectionArea area, short roomId) {
+        getDelegate().build(area, roomId);
     }
 
     @Override
-    public void sell(Vector2f start, Vector2f end) {
-        getDelegate().sell(start, end);
+    public void sell(SelectionArea area) {
+        getDelegate().sell(area);
     }
 
     @Override

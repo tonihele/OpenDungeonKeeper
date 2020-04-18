@@ -16,14 +16,17 @@
  */
 package toniarts.openkeeper.game.component;
 
+import com.jme3.network.serializing.serializers.FieldSerializer;
 import com.simsilica.es.EntityComponent;
 import toniarts.openkeeper.game.controller.room.AbstractRoomController;
+import toniarts.openkeeper.game.network.Transferable;
 
 /**
  * Tags an entity to be storaged on a room
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(FieldSerializer.class)
 public class RoomStorage implements EntityComponent {
 
     public AbstractRoomController.ObjectType objectType;

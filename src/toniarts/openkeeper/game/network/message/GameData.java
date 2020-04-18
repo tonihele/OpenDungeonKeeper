@@ -16,15 +16,18 @@
  */
 package toniarts.openkeeper.game.network.message;
 
+import com.jme3.network.serializing.serializers.FieldSerializer;
 import java.util.Collection;
 import toniarts.openkeeper.game.data.Keeper;
 import toniarts.openkeeper.game.map.MapData;
+import toniarts.openkeeper.game.network.Transferable;
 
 /**
  * Wrapper for game data
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(FieldSerializer.class)
 public class GameData {
 
     private Collection<Keeper> players;

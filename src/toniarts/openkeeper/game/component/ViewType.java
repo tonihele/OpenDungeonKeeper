@@ -16,11 +16,15 @@
  */
 package toniarts.openkeeper.game.component;
 
+import com.jme3.network.serializing.serializers.EnumSerializer;
+import toniarts.openkeeper.game.network.Transferable;
+
 /**
  * Signifies the view/record type of an object
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(EnumSerializer.class)
 public enum ViewType {
     CREATURE,
     OBJECT,

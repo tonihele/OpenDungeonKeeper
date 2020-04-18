@@ -46,6 +46,7 @@ import toniarts.openkeeper.tools.convert.map.KwdFile;
 import toniarts.openkeeper.tools.convert.map.Room;
 import toniarts.openkeeper.tools.convert.map.Trap;
 import toniarts.openkeeper.utils.Utils;
+import toniarts.openkeeper.view.selection.SelectionArea;
 
 /**
  * The game state that actually runs the game. Has no relation to visuals.
@@ -212,18 +213,18 @@ public class GameServerState extends AbstractAppState {
         }
 
         @Override
-        public void onSelectTiles(Vector2f start, Vector2f end, boolean select, short playerId) {
-            mapController.selectTiles(start, end, select, playerId);
+        public void onSelectTiles(SelectionArea area, short playerId) {
+            mapController.selectTiles(area, playerId);
         }
 
         @Override
-        public void onBuild(Vector2f start, Vector2f end, short roomId, short playerId) {
-            gameWorldController.build(start, end, playerId, roomId);
+        public void onBuild(SelectionArea area, short roomId, short playerId) {
+            gameWorldController.build(area, playerId, roomId);
         }
 
         @Override
-        public void onSell(Vector2f start, Vector2f end, short playerId) {
-            gameWorldController.sell(start, end, playerId);
+        public void onSell(SelectionArea area, short playerId) {
+            gameWorldController.sell(area, playerId);
         }
 
         @Override

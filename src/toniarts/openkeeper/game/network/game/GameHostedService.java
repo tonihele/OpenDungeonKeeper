@@ -55,6 +55,7 @@ import toniarts.openkeeper.game.state.session.GameSessionServerService;
 import toniarts.openkeeper.game.state.session.GameSessionServiceListener;
 import toniarts.openkeeper.tools.convert.map.TriggerAction;
 import toniarts.openkeeper.utils.GameLoop;
+import toniarts.openkeeper.view.selection.SelectionArea;
 
 /**
  * Game server hosts lobby service for the game clients.
@@ -516,23 +517,23 @@ public class GameHostedService extends AbstractHostedConnectionService implement
         }
 
         @Override
-        public void selectTiles(Vector2f start, Vector2f end, boolean select) {
+        public void selectTiles(SelectionArea area) {
             for (GameSessionServiceListener listener : serverListeners.getArray()) {
-                listener.onSelectTiles(start, end, select, clientInfo.getKeeper().getId());
+                listener.onSelectTiles(area, clientInfo.getKeeper().getId());
             }
         }
 
         @Override
-        public void build(Vector2f start, Vector2f end, short roomId) {
+        public void build(SelectionArea area, short roomId) {
             for (GameSessionServiceListener listener : serverListeners.getArray()) {
-                listener.onBuild(start, end, roomId, clientInfo.getKeeper().getId());
+                listener.onBuild(area, roomId, clientInfo.getKeeper().getId());
             }
         }
 
         @Override
-        public void sell(Vector2f start, Vector2f end) {
+        public void sell(SelectionArea area) {
             for (GameSessionServiceListener listener : serverListeners.getArray()) {
-                listener.onSell(start, end, clientInfo.getKeeper().getId());
+                listener.onSell(area, clientInfo.getKeeper().getId());
             }
         }
 

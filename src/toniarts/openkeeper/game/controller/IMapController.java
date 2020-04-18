@@ -1,11 +1,21 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2014-2018 OpenKeeper
+ *
+ * OpenKeeper is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * OpenKeeper is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OpenKeeper.  If not, see <http://www.gnu.org/licenses/>.
  */
 package toniarts.openkeeper.game.controller;
 
-import com.jme3.math.Vector2f;
 import java.awt.Point;
 import java.util.Collection;
 import java.util.List;
@@ -19,6 +29,7 @@ import toniarts.openkeeper.game.listener.MapListener;
 import toniarts.openkeeper.game.listener.RoomListener;
 import toniarts.openkeeper.game.logic.IGameLogicUpdatable;
 import toniarts.openkeeper.game.map.IMapInformation;
+import toniarts.openkeeper.view.selection.SelectionArea;
 
 /**
  * Map related actions available to all players
@@ -30,12 +41,10 @@ public interface IMapController extends IMapInformation, IGameLogicUpdatable {
     /**
      * Set some tiles selected/undelected
      *
-     * @param start start coordinates
-     * @param end end coordinates
-     * @param select select or unselect
+     * @param area
      * @param playerId the player who selected the tile
      */
-    void selectTiles(Vector2f start, Vector2f end, boolean select, short playerId);
+    void selectTiles(SelectionArea area, short playerId);
 
     /**
      * If you want to get notified about tile changes
@@ -183,7 +192,7 @@ public interface IMapController extends IMapInformation, IGameLogicUpdatable {
      *
      * @param points the points to flash
      * @param playerId the player whose flashing will be affected
-     * @param time   the time to flash
+     * @param time the time to flash
      */
     public void flashTiles(List<Point> points, short playerId, int time);
 
@@ -208,5 +217,9 @@ public interface IMapController extends IMapInformation, IGameLogicUpdatable {
      * terrain in the starting coordinates
      */
     public Set<Point> getTerrainBatches(List<Point> startingPoints, int x1, int x2, int y1, int y2);
+
+    public void buildOrSellRoom(SelectionArea area, short playerId, short roomId);
+
+    public void buildOrSellRoom(SelectionArea area, short playerId);
 
 }

@@ -21,7 +21,6 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
-import com.jme3.math.Vector2f;
 import com.jme3.util.SafeArrayList;
 import java.awt.Point;
 import java.io.IOException;
@@ -29,12 +28,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import toniarts.openkeeper.common.RoomInstance;
 import toniarts.openkeeper.game.control.Container;
 import toniarts.openkeeper.game.controller.creature.ICreatureController;
+import toniarts.openkeeper.game.controller.map.BuildTileControl;
 import toniarts.openkeeper.game.controller.map.FlashTileControl;
 import toniarts.openkeeper.game.controller.room.AbstractRoomController.ObjectType;
 import toniarts.openkeeper.game.controller.room.IRoomController;
@@ -48,6 +49,7 @@ import toniarts.openkeeper.tools.convert.map.Room;
 import toniarts.openkeeper.tools.convert.map.Terrain;
 import toniarts.openkeeper.tools.convert.map.Variable;
 import toniarts.openkeeper.utils.WorldUtils;
+import toniarts.openkeeper.view.selection.SelectionArea;
 
 /**
  * This is controller for the map related functions
@@ -73,28 +75,29 @@ public final class MapController extends Container implements Savable, IMapContr
     /**
      * Load map data from a KWD file straight (new game)
      *
-     * @param kwdFile           the KWD file
+     * @param kwdFile the KWD file
      * @param objectsController objects controller
-     * @param gameSettings      the game settings
+     * @param gameSettings the game settings
      * @param gameTimer
+     * @param gameWorldController
      */
     public MapController(KwdFile kwdFile, IObjectsController objectsController, Map<Variable.MiscVariable.MiscType, Variable.MiscVariable> gameSettings,
-            IGameTimer gameTimer) {
+            IGameTimer gameTimer, IBuildOrSellRoom gameWorldController) {
         this.kwdFile = kwdFile;
         this.objectsController = objectsController;
         this.mapData = new MapData(kwdFile);
         this.gameSettings = gameSettings;
         this.gameTimer = gameTimer;
-
         // Load rooms
         loadRooms();
+        addControl(new BuildTileControl(gameWorldController));
     }
 
     /**
      * Instantiate a map controller from map data (loaded game)
      *
-     * @param mapData      the map data
-     * @param kwdFile      the KWD file
+     * @param mapData the map data
+     * @param kwdFile the KWD file
      * @param gameSettings the game settings
      */
     public MapController(MapData mapData, KwdFile kwdFile, Map<Variable.MiscVariable.MiscType, Variable.MiscVariable> gameSettings, IGameTimer gameTimer) {
@@ -110,29 +113,26 @@ public final class MapController extends Container implements Savable, IMapContr
     }
 
     private void loadRooms() {
-
         // Go through the tiles and detect any rooms
-        for (int y = 0; y < mapData.getHeight(); y++) {
-            for (int x = 0; x < mapData.getWidth(); x++) {
-                loadRoom(new Point(x, y));
-            }
+        for (MapTile tile : mapData) {
+            loadRoom(tile);
         }
     }
 
-    private void loadRoom(Point p) {
-        MapTile mapTile = mapData.getTile(p);
+    private void loadRoom(MapTile mapTile) {
+        // check flag
         if (!kwdFile.getTerrain(mapTile.getTerrainId()).getFlags().contains(Terrain.TerrainFlag.ROOM)) {
             return;
         }
 
-        if (roomCoordinates.containsKey(p)) {
+        if (roomCoordinates.containsKey(mapTile.getLocation())) {
             return;
         }
 
         // Find it
         RoomInstance roomInstance = new RoomInstance(kwdFile.getRoomByTerrain(mapTile.getTerrainId()));
         roomInstance.setOwnerId(mapTile.getOwnerId());
-        findRoom(p, roomInstance);
+        findRoom(mapTile.getLocation(), roomInstance);
 
         // Create a controller for it
         IRoomController roomController = RoomControllerFactory.constructRoom(kwdFile, roomInstance, objectsController, gameSettings, gameTimer);
@@ -141,9 +141,8 @@ public final class MapController extends Container implements Savable, IMapContr
 
         // TODO: A bit of a design problem here
         /**
-         * Unclear responsibilities between the world and map controller.
-         * Also a result of how we handle the building and selling by
-         * destroying rooms.
+         * Unclear responsibilities between the world and map controller. Also a
+         * result of how we handle the building and selling by destroying rooms.
          * But at least keep anyone who is listening intact
          */
         notifyOnBuild(roomController.getRoomInstance().getOwnerId(), roomController);
@@ -153,7 +152,7 @@ public final class MapController extends Container implements Savable, IMapContr
      * Find the room starting from a certain point, rooms are never diagonally
      * attached
      *
-     * @param p            starting point
+     * @param p starting point
      * @param roomInstance the room instance
      */
     private void findRoom(Point p, RoomInstance roomInstance) {
@@ -261,21 +260,22 @@ public final class MapController extends Container implements Savable, IMapContr
     }
 
     @Override
-    public void selectTiles(Vector2f start, Vector2f end, boolean select, short playerId) {
+    public void selectTiles(SelectionArea area, short playerId) {
         List<MapTile> updatableTiles = new ArrayList<>();
-        for (int x = (int) Math.max(0, start.x); x < Math.min(kwdFile.getMap().getWidth(), end.x + 1); x++) {
-            for (int y = (int) Math.max(0, start.y); y < Math.min(kwdFile.getMap().getHeight(), end.y + 1); y++) {
-                MapTile tile = getMapData().getTile(x, y);
-                if (tile == null) {
-                    continue;
-                }
-                Terrain terrain = kwdFile.getTerrain(tile.getTerrainId());
-                if (!terrain.getFlags().contains(Terrain.TerrainFlag.TAGGABLE)) {
-                    continue;
-                }
-                tile.setSelected(select, playerId);
-                updatableTiles.add(tile);
+        MapTile startTile = getMapData().getTile(WorldUtils.vectorToPoint(area.getRealStart()));
+        boolean select = (startTile == null) ? true : !startTile.isSelected(playerId);
+
+        for (Iterator<Point> it = area.simpleIterator(); it.hasNext();) {
+            MapTile tile = getMapData().getTile(it.next());
+            if (tile == null) {
+                continue;
             }
+            Terrain terrain = kwdFile.getTerrain(tile.getTerrainId());
+            if (!terrain.getFlags().contains(Terrain.TerrainFlag.TAGGABLE)) {
+                continue;
+            }
+            tile.setSelected(select, playerId);
+            updatableTiles.add(tile);
         }
         //Point[] tiles = updatableTiles.toArray(new Point[updatableTiles.size()]);
         //mapLoader.updateTiles(tiles);
@@ -303,6 +303,14 @@ public final class MapController extends Container implements Savable, IMapContr
         return terrain.getFlags().contains(Terrain.TerrainFlag.TAGGABLE);
     }
 
+    /**
+     * Does not check adjacent to own tile
+     *
+     * @param p location
+     * @param playerId
+     * @param roomId
+     * @return
+     */
     @Override
     public boolean isBuildable(Point p, short playerId, short roomId) {
         MapTile tile = getMapData().getTile(p);
@@ -326,8 +334,7 @@ public final class MapController extends Container implements Savable, IMapContr
         if ((room.getFlags().contains(Room.RoomFlag.PLACEABLE_ON_WATER) && terrain.getFlags().contains(Terrain.TerrainFlag.WATER))
                 || room.getFlags().contains(Room.RoomFlag.PLACEABLE_ON_LAVA) && terrain.getFlags().contains(Terrain.TerrainFlag.LAVA)) {
 
-            // We need to have an adjacent owned tile
-            return hasAdjacentOwnedPath(tile.getLocation(), playerId);
+            return true;
         }
 
         return false;
@@ -413,7 +420,7 @@ public final class MapController extends Container implements Savable, IMapContr
             return false;
         }
         Terrain terrain = kwdFile.getTerrain(tile.getTerrainId());
-            return terrain.getFlags().contains(Terrain.TerrainFlag.LAVA);
+        return terrain.getFlags().contains(Terrain.TerrainFlag.LAVA);
     }
 
     @Override
@@ -485,8 +492,8 @@ public final class MapController extends Container implements Savable, IMapContr
             /**
              * Unclear responsibilities between the world and map controller.
              * Also a result of how we handle the building and selling by
-             * destroying rooms.
-             * But at least keep anyone who is listening intact
+             * destroying rooms. But at least keep anyone who is listening
+             * intact
              */
             notifyOnSold(roomController.getRoomInstance().getOwnerId(), roomController);
         }
@@ -496,7 +503,7 @@ public final class MapController extends Container implements Savable, IMapContr
      * Get rooms by function.<br> FIXME: Should the player have ready lists?
      *
      * @param objectType the function
-     * @param playerId   the player id, can be null
+     * @param playerId the player id, can be null
      * @return list of rooms that match the criteria
      */
     @Override
@@ -516,7 +523,7 @@ public final class MapController extends Container implements Savable, IMapContr
     @Override
     public void updateRooms(Point[] coordinates) {
         for (Point p : coordinates) {
-            loadRoom(p);
+            loadRoom(mapData.getTile(p));
         }
     }
 
@@ -661,7 +668,7 @@ public final class MapController extends Container implements Savable, IMapContr
     /**
      * Heal a tile
      *
-     * @param point    the point
+     * @param point the point
      * @param playerId the player applying the healing
      */
     @Override
@@ -723,7 +730,7 @@ public final class MapController extends Container implements Savable, IMapContr
     /**
      * Damage a room
      *
-     * @param point    tile coordinate
+     * @param point tile coordinate
      * @param playerId for the player
      */
     private void damageRoom(Point point, short playerId) {
@@ -856,6 +863,16 @@ public final class MapController extends Container implements Savable, IMapContr
     }
 
     @Override
+    public void buildOrSellRoom(SelectionArea area, short playerId, short roomId) {
+        getControl(BuildTileControl.class).add(area, playerId, roomId);
+    }
+
+    @Override
+    public void buildOrSellRoom(SelectionArea area, short playerId) {
+        buildOrSellRoom(area, playerId, (short) 0);
+    }
+
+    @Override
     public void unFlashTiles(List<Point> points, short playerId) {
         List<Point> tilesToUpdate = new ArrayList<>(points.size());
 
@@ -947,5 +964,59 @@ public final class MapController extends Container implements Savable, IMapContr
                 findTerrainBatch(new Point(p.x - 1, p.y), terrainId, batches, x1, x2, y1, y2);
             }
         }
+    }
+
+    @Override
+    public boolean isSellable(SelectionArea selectionArea, short playerId) {
+        for (Iterator<Point> it = selectionArea.simpleIterator(); it.hasNext();) {
+            Point p = it.next();
+
+            MapTile tile = getMapData().getTile(p);
+            if (tile != null && isSellable(p, playerId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isBuildable(SelectionArea selectionArea, short playerId, short roomId) {
+
+        for (Iterator<Point> it = selectionArea.simpleIterator(); it.hasNext();) {
+            Point p = it.next();
+
+            MapTile tile = getMapData().getTile(p);
+            if (tile == null) {
+                continue;
+            }
+
+            Room room = kwdFile.getRoomById(roomId);
+            Terrain terrain = kwdFile.getTerrain(tile.getTerrainId());
+
+            // Ownable tile is needed for land building (and needs to be owned by us)
+            if (room.getFlags().contains(Room.RoomFlag.PLACEABLE_ON_LAND)
+                    && !terrain.getFlags().contains(Terrain.TerrainFlag.SOLID)
+                    && terrain.getFlags().contains(Terrain.TerrainFlag.OWNABLE)
+                    && !terrain.getFlags().contains(Terrain.TerrainFlag.ROOM)
+                    && tile.getOwnerId() == playerId) {
+                return true;
+            }
+
+            // See if we are dealing with bridges
+            if ((room.getFlags().contains(Room.RoomFlag.PLACEABLE_ON_WATER)
+                    && terrain.getFlags().contains(Terrain.TerrainFlag.WATER))
+                    || room.getFlags().contains(Room.RoomFlag.PLACEABLE_ON_LAVA)
+                    && terrain.getFlags().contains(Terrain.TerrainFlag.LAVA)) {
+
+                // We need to have an adjacent owned tile
+                boolean adjacent = hasAdjacentOwnedPath(tile.getLocation(), playerId);
+                if (adjacent) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

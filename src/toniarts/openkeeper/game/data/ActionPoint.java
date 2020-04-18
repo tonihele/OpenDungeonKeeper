@@ -20,7 +20,9 @@ import com.jme3.math.Vector2f;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 import toniarts.openkeeper.game.control.Container;
 import toniarts.openkeeper.tools.convert.map.Thing;
 
@@ -29,7 +31,7 @@ import toniarts.openkeeper.tools.convert.map.Thing;
  *
  * @author ArchDemon
  */
-public class ActionPoint extends Container implements ITriggerable {
+public class ActionPoint extends Container implements ITriggerable, Iterable<Point> {
 
     private final int id;
     private final int triggerId;
@@ -39,7 +41,7 @@ public class ActionPoint extends Container implements ITriggerable {
     private final int waitDelay;
     private final int nextWaypointId;
     private final Vector2f center;
-    private final List<Point> points;
+    private List<Point> points;
 
     public ActionPoint(Thing.ActionPoint acionPoint) {
         id = acionPoint.getId();
@@ -49,14 +51,6 @@ public class ActionPoint extends Container implements ITriggerable {
         nextWaypointId = acionPoint.getNextWaypointId();
         flags = acionPoint.getFlags();
         triggerId = acionPoint.getTriggerId();
-
-        points = new ArrayList<>((end.x - start.x + 1) * (end.y - start.y + 1));
-        for (int x = start.x; x <= end.x; x++) {
-            for (int y = start.y; y <= end.y; y++) {
-                points.add(new Point(x, y));
-            }
-        }
-
         center = new Vector2f((start.x + end.x) / 2, (start.y + end.y) / 2);
     }
 
@@ -94,6 +88,14 @@ public class ActionPoint extends Container implements ITriggerable {
     }
 
     public List<Point> getPoints() {
+        if (points == null) {
+            points = new ArrayList<>((end.x - start.x + 1) * (end.y - start.y + 1));
+            for (int x = start.x; x <= end.x; x++) {
+                for (int y = start.y; y <= end.y; y++) {
+                    points.add(new Point(x, y));
+                }
+            }
+        }
         return points;
     }
 
@@ -101,5 +103,47 @@ public class ActionPoint extends Container implements ITriggerable {
     public String toString() {
         return "ActionPoint { id=" + id + ", triggerId=" + triggerId + ", start=" + start + ", end="
                 + end + ", flags=" + flags + ", waitDelay=" + waitDelay + ", nextWaypointId=" + nextWaypointId + " }";
+    }
+
+    @Override
+    public Iterator<Point> iterator() {
+        return new ActionPointIterator();
+    }
+
+    private class ActionPointIterator implements Iterator<Point> {
+
+        private Point cursor;
+
+        @Override
+        public boolean hasNext() {
+            return !ActionPoint.this.end.equals(cursor);
+        }
+
+        @Override
+        public Point next() {
+
+            if (cursor == null) {
+                cursor = (Point) ActionPoint.this.start.clone();
+                return cursor;
+            }
+
+            cursor.x++;
+            if (cursor.x > end.x) {
+                cursor.x = start.x;
+                cursor.y++;
+            }
+
+            return cursor;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void forEachRemaining(Consumer<? super Point> consumer) {
+            throw new UnsupportedOperationException();
+        }
     }
 }

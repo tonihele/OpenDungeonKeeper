@@ -16,9 +16,11 @@
  */
 package toniarts.openkeeper.game.component;
 
+import com.jme3.network.serializing.serializers.FieldSerializer;
 import com.simsilica.es.EntityComponent;
 import com.simsilica.es.EntityId;
 import java.awt.Point;
+import toniarts.openkeeper.game.network.Transferable;
 import toniarts.openkeeper.game.task.TaskType;
 
 /**
@@ -26,6 +28,7 @@ import toniarts.openkeeper.game.task.TaskType;
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(FieldSerializer.class)
 public class TaskComponent implements EntityComponent {
 
     public long taskId;

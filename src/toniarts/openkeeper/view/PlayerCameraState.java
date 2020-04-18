@@ -224,6 +224,7 @@ public class PlayerCameraState extends AbstractPauseAwareState implements Action
         String sweepFile = "EnginePath" + sweepFileId;
 
         // Do cinematic transition
+        // FIXME app is null sometimes. Maybe State not initialized yet
         Cinematic c = new Cinematic(app, sweepFile, start);
         c.addListener(new CinematicEventListener() {
             @Override

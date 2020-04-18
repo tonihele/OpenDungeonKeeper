@@ -1,45 +1,34 @@
 package toniarts.openkeeper.view.selection;
 
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import java.awt.Point;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.function.Consumer;
 import toniarts.openkeeper.utils.WorldUtils;
 
 /**
  * @author 7willuwe : Philip Willuweit
  */
-public class SelectionArea implements Iterable<List<Point>> {
+public class SelectionArea implements Iterable<Set<Point>> {
 
     private Vector2f start = new Vector2f();
     private Vector2f end = new Vector2f();
-    private float scale = 1;
 
-    public SelectionArea(Vector2f start, Vector2f end) {
-        this.start = start;
-        this.end = end;
-    }
-
-    public SelectionArea(float appScaled) {
-        this.scale = appScaled;
+    public SelectionArea() {
         this.start = new Vector2f(Vector2f.ZERO);
         this.end = new Vector2f(Vector2f.ZERO);
     }
 
     /**
-     * For single square use only
-     *
-     * @param appScaled
      * @param start Start position
      * @param end End position
      */
-    public SelectionArea(float appScaled, Vector2f start, Vector2f end) {
+    public SelectionArea(Vector2f start, Vector2f end) {
         this.start = start;
         this.end = end;
-        this.scale = appScaled;
     }
 
     /**
@@ -89,20 +78,6 @@ public class SelectionArea implements Iterable<List<Point>> {
         end.set(position);
     }
 
-    /**
-     * @return the scale
-     */
-    public float getScale() {
-        return scale;
-    }
-
-    /**
-     * @param scale the scale to set
-     */
-    public void setScale(float scale) {
-        this.scale = scale;
-    }
-
     public Vector2f getCenter() {
         return new Vector2f((end.x + start.x) / 2, (start.y + end.y) / 2);
     }
@@ -111,61 +86,107 @@ public class SelectionArea implements Iterable<List<Point>> {
      * @return the delta x axis
      */
     public float getDeltaX() {
-        return (Math.abs(end.x - start.x) + 1) / scale;
+        return (Math.abs(end.x - start.x) + 1);
     }
 
     /**
      * @return the delta y axis
      */
     public float getDeltaY() {
-        return (Math.abs(end.y - start.y) + 1) / scale;
+        return (Math.abs(end.y - start.y) + 1);
     }
 
     @Override
-    public Iterator<List<Point>> iterator() {
+    public Iterator<Set<Point>> iterator() {
         return new SelectionArea.AreaIterator();
+    }
+
+    public Iterator<Point> simpleIterator() {
+        return new SimpleIterator();
+    }
+
+    private class SimpleIterator implements Iterator<Point> {
+
+        private final Point start = WorldUtils.vectorToPoint(SelectionArea.this.getStart());
+        private final Point end = WorldUtils.vectorToPoint(SelectionArea.this.getEnd());
+        private Point cursor;
+
+        @Override
+        public boolean hasNext() {
+            return !end.equals(cursor);
+        }
+
+        @Override
+        public Point next() {
+
+            if (cursor == null) {
+                cursor = (Point) start.clone();
+                return cursor;
+            }
+
+            cursor.x++;
+            if (cursor.x > end.x) {
+                cursor.x = start.x;
+                cursor.y++;
+            }
+
+            return cursor;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void forEachRemaining(Consumer<? super Point> consumer) {
+            throw new UnsupportedOperationException();
+        }
     }
 
     /**
      * An optimized version of AbstractList.Itr
      */
-    private class AreaIterator implements Iterator<List<Point>> {
+    private class AreaIterator implements Iterator<Set<Point>> {
 
-        private final Point cursor = WorldUtils.vectorToPoint(SelectionArea.this.getStart());
         private final Point start = WorldUtils.vectorToPoint(SelectionArea.this.getStart());
         private final Point end = WorldUtils.vectorToPoint(SelectionArea.this.getEnd());
+        private final Point realStart = WorldUtils.vectorToPoint(SelectionArea.this.getRealStart());
+        private final Point realEnd = WorldUtils.vectorToPoint(SelectionArea.this.getRealEnd());
+        private final Point delta = new Point(FastMath.sign(realStart.x - realEnd.x),
+                FastMath.sign(realStart.y - realEnd.y));
+
+        private Set<Point> cursor = new HashSet<>();
 
         @Override
         public boolean hasNext() {
-            return cursor.x != (end.x + 1) && cursor.y != (end.y + 1);
+            return !(cursor.size() == 1 && cursor.contains(realStart));
         }
 
         @Override
-        public List<Point> next() {
-            List result = new ArrayList<>();
+        public Set<Point> next() {
+            Set result = new HashSet<>();
 
-            while (cursor.y >= start.y && cursor.x <= end.x) {
-                check();
-                result.add(new Point(cursor.x, cursor.y));
-
-                cursor.x++;
-                cursor.y--;
+            if (cursor.isEmpty()) {
+                result.add(realEnd);
             }
 
-            if (cursor.y < start.y) {
-                cursor.y = start.y + (cursor.x - start.x);
-                cursor.x = start.x;
+            for (Point p : cursor) {
+                if (delta.x != 0) {
+                    Point neighborhood = new Point(p.x + delta.x, p.y);
+                    if (check(neighborhood)) {
+                        result.add(neighborhood);
+                    }
+                }
+                if (delta.y != 0) {
+                    Point neighborhood = new Point(p.x, p.y + delta.y);
+                    if (check(neighborhood)) {
+                        result.add(neighborhood);
+                    }
+                }
             }
 
-            if (cursor.x > end.x) {
-                cursor.y += (cursor.x - start.x) + 1;
-                cursor.x = start.x;
-            }
-
-            if (cursor.y > end.y) {
-                cursor.x = start.x + (cursor.y - end.y);
-                cursor.y = end.y;
-            }
+            cursor = result;
 
             return result;
         }
@@ -176,15 +197,12 @@ public class SelectionArea implements Iterable<List<Point>> {
         }
 
         @Override
-        public void forEachRemaining(Consumer<? super List<Point>> consumer) {
+        public void forEachRemaining(Consumer<? super Set<Point>> consumer) {
             throw new UnsupportedOperationException();
         }
 
-        private void check() {
-            if (cursor.x > end.x || cursor.x < start.x
-                    || cursor.y > end.y || cursor.y < start.y) {
-                throw new NoSuchElementException();
-            }
+        private boolean check(Point p) {
+            return p.x <= end.x && p.x >= start.x && p.y <= end.y && p.y >= start.y;
         }
     }
 }

@@ -41,6 +41,7 @@ import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.elements.Element;
 import java.awt.Point;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Logger;
 import toniarts.openkeeper.Main;
@@ -190,38 +191,41 @@ public abstract class PlayerInteractionState extends AbstractPauseAwareState {
                     }
                     return ColorIndicator.RED;
                 }
-                if (interactionState.getType() == Type.SELL) {
+                if (interactionState.getType() == Type.SELL
+                        && !gameClientState.getMapClientService().isSellable(selectionHandler.getSelectionArea(), player.getPlayerId())) {
                     return ColorIndicator.RED;
-                } else if (interactionState.getType() == Type.ROOM
+                }
+                if (interactionState.getType() == Type.ROOM
                         && !(gameClientState.getMapClientService().isTaggable(p)
-                        || (gameClientState.getMapClientService().isBuildable(p, player.getPlayerId(), (short) interactionState.getItemId())
-                        && isPlayerAffordToBuild(player, gameClientState.getLevelData().getRoomById(interactionState.getItemId()))))) {
+                        || isPlayerAffordToBuild(selectionHandler.getSelectionArea(), player.getPlayerId(), (short) interactionState.getItemId()))) {
                     return ColorIndicator.RED;
                 }
                 return ColorIndicator.BLUE;
             }
 
-            private boolean isPlayerAffordToBuild(Player player, Room room) {
-                int playerMoney = gameClientState.getPlayer(player.getPlayerId()).getGold();
+            private boolean isPlayerAffordToBuild(SelectionArea area, short playerId, short roomId) {
+                int playerMoney = gameClientState.getPlayer(playerId).getGold();
+                Room room = gameClientState.getLevelData().getRoomById(roomId);
                 if (playerMoney == 0) {
                     return false;
                 }
+                if (!gameClientState.getMapClientService().isBuildable(area, playerId, roomId)) {
+                    return false;
+                }
                 int buildablePlots = 0;
-                for (int x = (int) Math.max(0, selectionHandler.getSelectionArea().getStart().x); x < Math.min(gameClientState.getMapClientService().getMapData().getWidth(), selectionHandler.getSelectionArea().getEnd().x + 1); x++) {
-                    for (int y = (int) Math.max(0, selectionHandler.getSelectionArea().getStart().y); y < Math.min(gameClientState.getMapClientService().getMapData().getHeight(), selectionHandler.getSelectionArea().getEnd().y + 1); y++) {
-                        Point p = new Point(x, y);
+                for (Iterator<Point> it = area.simpleIterator(); it.hasNext();) {
+                    Point p = it.next();
 
-                        if (gameClientState.getMapClientService().isBuildable(p, player.getPlayerId(), room.getId())) {
-                            buildablePlots++;
-                        }
+                    if (gameClientState.getMapClientService().isBuildable(p, playerId, roomId)) {
+                        buildablePlots++;
+                    }
 
-                        // See the gold amount
-                        if (playerMoney < buildablePlots * room.getCost()) {
-                            return false;
-                        }
+                    // See the gold amount
+                    if (playerMoney < buildablePlots * room.getCost()) {
+                        return false;
                     }
                 }
-                return true;
+                return (buildablePlots != 0);
             }
         };
 
@@ -598,14 +602,13 @@ public abstract class PlayerInteractionState extends AbstractPauseAwareState {
                                 || (interactionState.getType() == Type.ROOM
                                 && gameClientState.getMapClientService().isTaggable(WorldUtils.vectorToPoint(selectionArea.getRealStart())))) {
 
-                            // Determine if this is a select/deselect by the starting tile's status
-                            boolean select = !gameClientState.getMapClientService().isSelected(WorldUtils.vectorToPoint(selectionArea.getRealStart()), player.getPlayerId());
-                            gameClientState.getGameClientService().selectTiles(selectionArea.getStart(), selectionArea.getEnd(), select);
+                            gameClientState.getGameClientService().selectTiles(selectionArea);
                         } else if (interactionState.getType() == Type.ROOM
-                                && gameClientState.getMapClientService().isBuildable(WorldUtils.vectorToPoint(selectionArea.getRealStart()), player.getPlayerId(), (short) interactionState.getItemId())) {
-                            gameClientState.getGameClientService().build(selectionArea.getStart(), selectionArea.getEnd(), (short) interactionState.getItemId());
-                        } else if (interactionState.getType() == Type.SELL) {
-                            gameClientState.getGameClientService().sell(selectionArea.getStart(), selectionArea.getEnd());
+                                && gameClientState.getMapClientService().isBuildable(selectionArea, player.getPlayerId(), (short) interactionState.getItemId())) {
+                            gameClientState.getGameClientService().build(selectionArea, (short) interactionState.getItemId());
+                        } else if (interactionState.getType() == Type.SELL
+                                && gameClientState.getMapClientService().isSellable(selectionArea, player.getPlayerId())) {
+                            gameClientState.getGameClientService().sell(selectionArea);
                         }
 
                         selectionHandler.setActive(false);

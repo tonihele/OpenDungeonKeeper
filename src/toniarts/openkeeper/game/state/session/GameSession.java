@@ -22,6 +22,7 @@ import com.simsilica.es.EntityData;
 import com.simsilica.es.EntityId;
 import java.awt.Point;
 import toniarts.openkeeper.game.state.CheatState;
+import toniarts.openkeeper.view.selection.SelectionArea;
 
 /**
  * Clients view on game service
@@ -60,31 +61,27 @@ public interface GameSession {
     /**
      * Build a building to the wanted area
      *
-     * @param start start coordinates
-     * @param end end coordinates
+     * @param area
      * @param roomId room to build
      */
     @Asynchronous
-    public void build(Vector2f start, Vector2f end, short roomId);
+    public void build(SelectionArea area, short roomId);
 
     /**
      * Sell building(s) from the wanted area
      *
-     * @param start start coordinates
-     * @param end end coordinates
+     * @param area
      */
     @Asynchronous
-    public void sell(Vector2f start, Vector2f end);
+    public void sell(SelectionArea area);
 
     /**
      * Set some tiles selected/undelected
      *
-     * @param start start coordinates
-     * @param end end coordinates
-     * @param select select or unselect
+     * @param area
      */
     @Asynchronous
-    public void selectTiles(Vector2f start, Vector2f end, boolean select);
+    public void selectTiles(SelectionArea area);
 
     /**
      * Interact with given entity

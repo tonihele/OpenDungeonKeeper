@@ -16,13 +16,16 @@
  */
 package toniarts.openkeeper.game.state.lobby;
 
+import com.jme3.network.serializing.serializers.FieldSerializer;
 import toniarts.openkeeper.game.data.Keeper;
+import toniarts.openkeeper.game.network.Transferable;
 
 /**
  * Small container to hold info about the connected client
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(FieldSerializer.class)
 public class ClientInfo {
 
     private int systemMemory;

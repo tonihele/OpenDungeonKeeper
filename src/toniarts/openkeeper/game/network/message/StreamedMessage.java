@@ -17,12 +17,15 @@
 package toniarts.openkeeper.game.network.message;
 
 import com.jme3.network.AbstractMessage;
+import com.jme3.network.serializing.serializers.FieldSerializer;
+import toniarts.openkeeper.game.network.Transferable;
 
 /**
  * A message that holds a part (or all) of a streamed object data
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(FieldSerializer.class)
 public class StreamedMessage extends AbstractMessage {
 
     private int totalSize;

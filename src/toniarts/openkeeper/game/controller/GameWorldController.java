@@ -75,6 +75,7 @@ import toniarts.openkeeper.tools.convert.map.Terrain;
 import toniarts.openkeeper.tools.convert.map.Tile;
 import toniarts.openkeeper.tools.convert.map.Variable;
 import toniarts.openkeeper.utils.WorldUtils;
+import toniarts.openkeeper.view.selection.SelectionArea;
 
 /**
  * Game world controller, controls the game world related actions
@@ -119,7 +120,7 @@ public class GameWorldController implements IGameWorldController, IPlayerActions
         objectsController = new ObjectsController(kwdFile, entityData, gameSettings, gameTimer, gameController);
 
         // Load the map
-        mapController = new MapController(kwdFile, objectsController, gameSettings, gameTimer);
+        mapController = new MapController(kwdFile, objectsController, gameSettings, gameTimer, this);
 
         // Load creatures
         creaturesController = new CreaturesController(kwdFile, entityData, gameSettings, gameTimer, gameController, mapController, levelInfo);
@@ -303,23 +304,23 @@ public class GameWorldController implements IGameWorldController, IPlayerActions
     }
 
     @Override
-    public void build(Vector2f start, Vector2f end, short playerId, short roomId) {
+    public void build(SelectionArea area, short playerId, short roomId) {
+        if (mapController.isBuildable(area, playerId, roomId)) {
+            mapController.buildOrSellRoom(area, playerId, roomId);
+        }
+    }
+
+    @Override
+    public void build(Set<Point> points, short playerId, short roomId) {
         List<Point> instancePlots = new ArrayList<>();
-        int x1 = (int) Math.max(0, start.x);
-        int x2 = (int) Math.min(kwdFile.getMap().getWidth(), end.x + 1);
-        int y1 = (int) Math.max(0, start.y);
-        int y2 = (int) Math.min(kwdFile.getMap().getHeight(), end.y + 1);
-        for (int x = x1; x < x2; x++) {
-            for (int y = y1; y < y2; y++) {
-                Point p = new Point(x, y);
 
-                // See that is this valid
-                if (!mapController.isBuildable(p, playerId, roomId)) {
-                    continue;
-                }
-
-                instancePlots.add(p);
+        for (Point p : points) {
+            // See that is this valid
+            if (!mapController.isBuildable(p, playerId, roomId)) {
+                continue;
             }
+
+            instancePlots.add(p);
         }
 
         // If no plots, no building
@@ -329,11 +330,6 @@ public class GameWorldController implements IGameWorldController, IPlayerActions
 
         // If this is a bridge, we only got the starting point(s) as valid so we need to determine valid bridge pieces by our ourselves
         Room room = kwdFile.getRoomById(roomId);
-        if ((room.getFlags().contains(Room.RoomFlag.PLACEABLE_ON_WATER))
-                || room.getFlags().contains(Room.RoomFlag.PLACEABLE_ON_LAVA)) {
-            instancePlots = new ArrayList(mapController.getTerrainBatches(instancePlots, x1, x2, y1, y2));
-        }
-
         // See that can we afford the building
         synchronized (GOLD_LOCK) {
             int cost = instancePlots.size() * room.getCost();
@@ -424,48 +420,53 @@ public class GameWorldController implements IGameWorldController, IPlayerActions
     }
 
     @Override
-    public void sell(Vector2f start, Vector2f end, short playerId) {
+    public void sell(SelectionArea area, short playerId) {
+        // FIXME does not work isSellable
+//        if (mapController.isSellable(area, playerId)) {
+            mapController.buildOrSellRoom(area, playerId);
+//        }
+    }
+
+    @Override
+    public void sell(Set<Point> points, short playerId) {
         List<MapTile> soldTiles = new ArrayList<>();
         Set<Point> updatableTiles = new HashSet<>();
         Set<RoomInstance> soldInstances = new HashSet<>();
         List<Point> roomCoordinates = new ArrayList<>();
         List<Map.Entry<Point, Integer>> moneyToReturnByPoint = new ArrayList<>();
-        for (int x = (int) Math.max(0, start.x); x < Math.min(kwdFile.getMap().getWidth(), end.x + 1); x++) {
-            for (int y = (int) Math.max(0, start.y); y < Math.min(kwdFile.getMap().getHeight(), end.y + 1); y++) {
-                Point p = new Point(x, y);
 
-                // See that is this valid
-                if (!mapController.isSellable(p, playerId)) {
-                    continue;
-                }
-
-                // Sell
-                MapTile tile = mapController.getMapData().getTile(p);
-                if (tile == null) {
-                    continue;
-                }
-                soldTiles.add(tile);
-
-                Terrain terrain = kwdFile.getTerrain(tile.getTerrainId());
-                if (terrain.getFlags().contains(Terrain.TerrainFlag.ROOM)) {
-                    Room room = kwdFile.getRoomByTerrain(tile.getTerrainId());
-                    if (room.getFlags().contains(Room.RoomFlag.PLACEABLE_ON_LAND)) {
-                        tile.setTerrainId(terrain.getDestroyedTypeTerrainId());
-                    } else // Water or lava
-                    if (tile.getBridgeTerrainType() == Tile.BridgeTerrainType.LAVA) {
-                        tile.setTerrainId(kwdFile.getMap().getLava().getTerrainId());
-                    } else {
-                        tile.setTerrainId(kwdFile.getMap().getWater().getTerrainId());
-                    }
-
-                    // Money back
-                    moneyToReturnByPoint.add(new AbstractMap.SimpleImmutableEntry<>(p, (int) (room.getCost() * (gameSettings.get(Variable.MiscVariable.MiscType.ROOM_SELL_VALUE_PERCENTAGE_OF_COST).getValue() / 100))));
-                }
-
-                // Get the instance
-                soldInstances.add(mapController.getRoomCoordinates().get(p));
-                updatableTiles.addAll(Arrays.asList(WorldUtils.getSurroundingTiles(mapController.getMapData(), p, true)));
+        for (Point p : points) {
+            // See that is this valid
+            if (!mapController.isSellable(p, playerId)) {
+                continue;
             }
+
+            // Sell
+            MapTile tile = mapController.getMapData().getTile(p);
+            if (tile == null) {
+                continue;
+            }
+            soldTiles.add(tile);
+
+            Terrain terrain = kwdFile.getTerrain(tile.getTerrainId());
+            if (terrain.getFlags().contains(Terrain.TerrainFlag.ROOM)) {
+                Room room = kwdFile.getRoomByTerrain(tile.getTerrainId());
+                if (room.getFlags().contains(Room.RoomFlag.PLACEABLE_ON_LAND)) {
+                    tile.setTerrainId(terrain.getDestroyedTypeTerrainId());
+                } else // Water or lava
+                if (tile.getBridgeTerrainType() == Tile.BridgeTerrainType.LAVA) {
+                    tile.setTerrainId(kwdFile.getMap().getLava().getTerrainId());
+                } else {
+                    tile.setTerrainId(kwdFile.getMap().getWater().getTerrainId());
+                }
+
+                // Money back
+                moneyToReturnByPoint.add(new AbstractMap.SimpleImmutableEntry<>(p, (int) (room.getCost() * (gameSettings.get(Variable.MiscVariable.MiscType.ROOM_SELL_VALUE_PERCENTAGE_OF_COST).getValue() / 100))));
+            }
+
+            // Get the instance
+            soldInstances.add(mapController.getRoomCoordinates().get(p));
+            updatableTiles.addAll(Arrays.asList(WorldUtils.getSurroundingTiles(mapController.getMapData(), p, true)));
         }
 
         // See if we did anything at all
@@ -531,8 +532,8 @@ public class GameWorldController implements IGameWorldController, IPlayerActions
     }
 
     @Override
-    public void selectTiles(Vector2f start, Vector2f end, boolean select, short playerId) {
-        mapController.selectTiles(start, end, select, playerId);
+    public void selectTiles(SelectionArea area, short playerId) {
+        mapController.selectTiles(area, playerId);
     }
 
     @Override

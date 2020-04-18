@@ -17,15 +17,18 @@
 package toniarts.openkeeper.game.component;
 
 import com.badlogic.gdx.math.Vector2;
+import com.jme3.network.serializing.serializers.FieldSerializer;
 import com.simsilica.es.EntityComponent;
 import java.awt.Point;
 import java.util.List;
+import toniarts.openkeeper.game.network.Transferable;
 
 /**
  * An entity class marking... well.. target of navigation with full path
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(FieldSerializer.class)
 public class Navigation implements EntityComponent {
 
     public Point target;

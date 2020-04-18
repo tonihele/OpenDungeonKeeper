@@ -20,13 +20,16 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
+import com.jme3.network.serializing.serializers.FieldSerializer;
 import java.io.IOException;
+import toniarts.openkeeper.game.network.Transferable;
 
 /**
  * Player's spell (Keeper Spell)
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(FieldSerializer.class)
 public class PlayerSpell extends ResearchableEntity {
 
     public PlayerSpell() {

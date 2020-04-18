@@ -391,13 +391,9 @@ public class TaskManager implements ITaskManager, IGameLogicUpdatable {
     }
 
     private void scanInitialTasks() {
-        MapData mapData = mapController.getMapData();
-        for (int y = 0; y < mapData.getHeight(); y++) {
-            for (int x = 0; x < mapData.getWidth(); x++) {
-                scanTerrainTasks(mapController.getMapData().getTile(x, y), false, false);
-            }
+        for (MapTile tile : mapController.getMapData()) {
+            scanTerrainTasks(tile, false, false);
         }
-
         // Object tasks
 //        for (ObjectControl objectControl : worldState.getThingLoader().getObjects()) {
 //            for (Entry<Short, Set<AbstractTask>> entry : taskQueues.entrySet()) {

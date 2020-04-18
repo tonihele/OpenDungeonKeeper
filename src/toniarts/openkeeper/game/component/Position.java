@@ -17,13 +17,16 @@
 package toniarts.openkeeper.game.component;
 
 import com.jme3.math.Vector3f;
+import com.jme3.network.serializing.serializers.FieldSerializer;
 import com.simsilica.es.EntityComponent;
+import toniarts.openkeeper.game.network.Transferable;
 
 /**
  * Simple entity position class
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(FieldSerializer.class)
 public class Position implements EntityComponent {
 
     public float rotation; // We are essentially 2D game, so around y-axis

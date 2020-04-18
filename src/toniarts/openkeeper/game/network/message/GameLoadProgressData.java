@@ -17,12 +17,15 @@
 package toniarts.openkeeper.game.network.message;
 
 import com.jme3.network.AbstractMessage;
+import com.jme3.network.serializing.serializers.FieldSerializer;
+import toniarts.openkeeper.game.network.Transferable;
 
 /**
  * The game loading progress data
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
+@Transferable(FieldSerializer.class)
 public class GameLoadProgressData extends AbstractMessage {
 
     private short keeperId;

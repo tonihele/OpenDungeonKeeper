@@ -79,12 +79,9 @@ public class ManaCalculatorLogic implements IGameLogicUpdatable {
 
     private void calculateGainFromMapTiles() {
         MapData mapData = mapController.getMapData();
-        for (int x = 0; x < mapData.getWidth(); x++) {
-            for (int y = 0; y < mapData.getHeight(); y++) {
-                MapTile tile = mapData.getTile(x, y);
-                if (manaGains.containsKey(tile.getOwnerId())) {
-                    manaGains.put(tile.getOwnerId(), manaGains.get(tile.getOwnerId()) + tile.getManaGain());
-                }
+        for (MapTile tile : mapData) {
+            if (manaGains.containsKey(tile.getOwnerId())) {
+                manaGains.put(tile.getOwnerId(), manaGains.get(tile.getOwnerId()) + tile.getManaGain());
             }
         }
     }
