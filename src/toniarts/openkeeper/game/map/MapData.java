@@ -18,7 +18,7 @@ package toniarts.openkeeper.game.map;
 
 import com.simsilica.es.EntityData;
 import com.simsilica.es.EntityId;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

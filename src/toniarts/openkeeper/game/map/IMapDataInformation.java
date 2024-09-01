@@ -16,7 +16,7 @@
  */
 package toniarts.openkeeper.game.map;
 
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.Iterator;
 import java.util.List;
 

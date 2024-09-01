@@ -26,7 +26,7 @@ import com.simsilica.es.Entity;
 import com.simsilica.es.EntityComponent;
 import com.simsilica.es.EntityContainer;
 import com.simsilica.es.EntityData;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.util.Collection;

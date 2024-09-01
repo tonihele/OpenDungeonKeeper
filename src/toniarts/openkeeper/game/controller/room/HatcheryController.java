@@ -18,7 +18,7 @@ package toniarts.openkeeper.game.controller.room;
 
 import com.simsilica.es.EntityData;
 import com.simsilica.es.EntityId;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import toniarts.openkeeper.common.RoomInstance;
 import toniarts.openkeeper.game.component.ChickenGenerator;
 import toniarts.openkeeper.game.controller.IGameTimer;

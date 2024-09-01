@@ -20,6 +20,7 @@ import com.jme3.asset.AssetManager;
 import toniarts.openkeeper.world.WorldState;
 import toniarts.openkeeper.world.effect.EffectManagerState;
 import toniarts.openkeeper.world.object.ObjectLoader;
+import toniarts.openkeeper.utils.Point;
 
 /**
  * The graveyard

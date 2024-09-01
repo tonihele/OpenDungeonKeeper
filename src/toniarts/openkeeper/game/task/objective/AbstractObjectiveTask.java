@@ -16,7 +16,7 @@
  */
 package toniarts.openkeeper.game.task.objective;
 
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import toniarts.openkeeper.game.controller.IMapController;

@@ -16,7 +16,7 @@
  */
 package toniarts.openkeeper.world;
 
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import toniarts.openkeeper.tools.convert.map.KwdFile;

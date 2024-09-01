@@ -16,7 +16,7 @@
  */
 package toniarts.openkeeper.world.room;
 
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.List;
 import javax.annotation.Nullable;
 import toniarts.openkeeper.tools.convert.map.Room;

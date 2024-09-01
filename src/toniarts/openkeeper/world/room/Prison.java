@@ -20,18 +20,17 @@ import com.jme3.asset.AssetManager;
 import com.jme3.scene.BatchNode;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import toniarts.openkeeper.utils.AssetUtils;
+import toniarts.openkeeper.utils.Point;
 import toniarts.openkeeper.world.MapLoader;
 import toniarts.openkeeper.world.WorldState;
 import toniarts.openkeeper.world.effect.EffectManagerState;
 import toniarts.openkeeper.world.object.ObjectLoader;
-import static toniarts.openkeeper.world.room.GenericRoom.hasSameTile;
 import toniarts.openkeeper.world.room.control.RoomPrisonerControl;
 
 /**

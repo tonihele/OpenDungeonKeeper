@@ -24,7 +24,6 @@ import com.jme3.math.Vector3f;
 import com.simsilica.es.EntityData;
 import com.simsilica.es.EntityId;
 import de.lessvoid.nifty.Nifty;
-import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +45,7 @@ import toniarts.openkeeper.tools.convert.map.Creature;
 import toniarts.openkeeper.tools.convert.map.KwdFile;
 import toniarts.openkeeper.tools.convert.map.Player;
 import toniarts.openkeeper.tools.convert.map.TriggerAction;
+import toniarts.openkeeper.utils.Point;
 import toniarts.openkeeper.view.PlayerCameraState;
 import toniarts.openkeeper.view.PlayerInteractionState;
 import toniarts.openkeeper.view.PlayerInteractionState.InteractionState;
@@ -410,7 +410,7 @@ public class PlayerState extends AbstractAppState implements PlayerListener {
     }
 
     public void zoomToDungeon() {
-        cameraState.setCameraLookAt(new Point(stateManager.getState(GameClientState.class).getPlayer(playerId).getDungeonHeartLocation()));
+        cameraState.setCameraLookAt(stateManager.getState(GameClientState.class).getPlayer(playerId).getDungeonHeartLocation());
     }
 
     /**

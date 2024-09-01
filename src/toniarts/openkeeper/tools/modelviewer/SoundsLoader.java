@@ -20,7 +20,6 @@ import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioData;
 import com.jme3.audio.AudioNode;
 import com.jme3.scene.Node;
-import java.awt.Point;
 import java.io.File;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
@@ -36,6 +35,7 @@ import toniarts.openkeeper.game.sound.SoundCategory;
 import toniarts.openkeeper.game.sound.SoundFile;
 import toniarts.openkeeper.game.sound.SoundGroup;
 import toniarts.openkeeper.tools.convert.AssetsConverter;
+import toniarts.openkeeper.utils.Point;
 import toniarts.openkeeper.utils.Utils;
 
 /**

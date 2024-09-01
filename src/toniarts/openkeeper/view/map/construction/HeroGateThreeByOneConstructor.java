@@ -20,7 +20,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.math.FastMath;
 import com.jme3.scene.BatchNode;
 import com.jme3.scene.Spatial;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import toniarts.openkeeper.tools.convert.map.Thing.Room.Direction;
 import toniarts.openkeeper.utils.AssetUtils;
 import toniarts.openkeeper.common.RoomInstance;

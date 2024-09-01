@@ -17,7 +17,7 @@
 package toniarts.openkeeper.game.task.worker;
 
 import com.jme3.math.Vector2f;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import toniarts.openkeeper.game.controller.IMapController;
 import toniarts.openkeeper.game.controller.creature.ICreatureController;
 import toniarts.openkeeper.game.navigation.INavigationService;

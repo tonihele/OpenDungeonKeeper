@@ -16,12 +16,12 @@
  */
 package toniarts.openkeeper.world;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import toniarts.openkeeper.utils.Point;
 
 /**
  * Holds an entity instance, series of coordinates that together form an entity

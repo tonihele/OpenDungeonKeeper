@@ -18,7 +18,7 @@ package toniarts.openkeeper.game.task.objective;
 
 import com.jme3.math.Vector2f;
 import com.simsilica.es.EntityId;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.time.Instant;
 import java.util.ArrayDeque;
 import java.util.Deque;

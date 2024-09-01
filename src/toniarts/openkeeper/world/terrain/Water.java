@@ -30,7 +30,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.texture.Texture;
 import com.jme3.util.BufferUtils;
-import java.awt.Point;
 import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +40,7 @@ import toniarts.openkeeper.tools.convert.AssetsConverter;
 import toniarts.openkeeper.tools.convert.map.ArtResource;
 import toniarts.openkeeper.tools.convert.map.Terrain;
 import toniarts.openkeeper.utils.AssetUtils;
+import toniarts.openkeeper.utils.Point;
 import toniarts.openkeeper.world.EntityInstance;
 import toniarts.openkeeper.world.MapLoader;
 

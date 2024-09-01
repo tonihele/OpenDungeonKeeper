@@ -16,7 +16,7 @@
  */
 package toniarts.openkeeper.game.controller.room;
 
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.Collection;
 import toniarts.openkeeper.common.RoomInstance;
 import toniarts.openkeeper.game.controller.IGameTimer;

@@ -18,7 +18,7 @@ package toniarts.openkeeper.game.state.session;
 
 import com.jme3.network.service.rmi.Asynchronous;
 import com.simsilica.es.EntityData;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.Collection;
 import java.util.List;
 import toniarts.openkeeper.game.data.Keeper;

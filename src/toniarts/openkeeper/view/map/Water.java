@@ -30,7 +30,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.texture.Texture;
 import com.jme3.util.BufferUtils;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
