@@ -22,7 +22,7 @@ import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.texture.Texture2D;
 import com.jme3.ui.Picture;
-import java.awt.Color;
+import toniarts.openkeeper.utils.Color;
 
 /**
  * Creates a progress indicator, 2D image to the GUI
