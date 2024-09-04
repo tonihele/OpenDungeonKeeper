@@ -24,7 +24,6 @@ import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.app.state.VideoRecorderAppState;
 import com.jme3.asset.AssetEventListener;
 import com.jme3.asset.AssetKey;
-import com.jme3.asset.AssetManager;
 import com.jme3.asset.TextureKey;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.light.AmbientLight;
@@ -35,11 +34,8 @@ import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.opengl.GLRenderer;
 import com.jme3.system.AppSettings;
-import com.jme3.system.JmeSystem;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.render.batch.BatchRenderConfiguration;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -48,7 +44,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -64,7 +59,6 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
 import toniarts.openkeeper.audio.plugins.MP2Loader;
 import toniarts.openkeeper.cinematics.CameraSweepDataLoader;
 import toniarts.openkeeper.game.data.Settings;
@@ -73,9 +67,6 @@ import toniarts.openkeeper.game.state.MainMenuState;
 import toniarts.openkeeper.game.state.SoundState;
 import toniarts.openkeeper.game.state.loading.TitleScreenState;
 import toniarts.openkeeper.game.state.session.LocalGameSession;
-import toniarts.openkeeper.setup.DKConverter;
-import toniarts.openkeeper.setup.DKFolderSelector;
-import toniarts.openkeeper.setup.IFrameClosingBehavior;
 import toniarts.openkeeper.tools.convert.AssetsConverter;
 import toniarts.openkeeper.tools.modelviewer.SoundsLoader;
 import toniarts.openkeeper.utils.PathUtils;
@@ -87,17 +78,14 @@ import toniarts.openkeeper.video.MovieState;
  *
  * @author Toni Helenius <helenius.toni@gmail.com>
  */
-public class Main extends SimpleApplication {
+public final class Main extends SimpleApplication {
 
     private static final Logger logger = System.getLogger(Main.class.getName());
-    
-    private static boolean folderOk = false;
-    private static boolean conversionOk = false;
-    public static final String VERSION = "*ALPHA*";
+
+    private static final String VERSION = "*ALPHA*";
     public static final String TITLE = "OpenKeeper";
     private static final String USER_HOME_FOLDER = System.getProperty("user.home").concat(File.separator).concat(".").concat(TITLE).concat(File.separator);
     private static final String SCREENSHOTS_FOLDER = USER_HOME_FOLDER.concat("SCRSHOTS").concat(File.separator);
-    private static final Object LOCK = new Object();
     private static Map<String, String> params;
     private static boolean debug;
 
@@ -108,7 +96,7 @@ public class Main extends SimpleApplication {
         super(new StatsAppState(), new DebugKeysAppState());
     }
 
-    public static void main(String[] args) throws InvocationTargetException, InterruptedException {
+    public static void main(String[] args) throws Exception {
 
         // Create main application instance
         parseArguments(args);
@@ -166,58 +154,21 @@ public class Main extends SimpleApplication {
      * @return true if the app is ok for running!
      * @throws InterruptedException lots of threads waiting
      */
-    private static boolean checkSetup(final Main app) throws InterruptedException {
-
-        boolean saveSetup = false;
+    private static boolean checkSetup(final Main app) {
 
         // First and foremost, the folder
         if (!PathUtils.checkDkFolder(getDkIIFolder())) {
-            logger.log(Level.INFO, "Dungeon Keeper II folder not found or valid! Prompting user!");
-            saveSetup = true;
-
-            // Let the user select
-            setLookNFeel();
-            DKFolderSelector frame = new DKFolderSelector() {
-                @Override
-                protected void continueOk(String path) {
-                    PathUtils.setDKIIFolder(PathUtils.fixFilePath(path));
-                    folderOk = true;
-                }
-            };
-            openFrameAndWait(frame);
-        } else {
-            folderOk = true;
+            logger.log(Level.WARNING, "Dungeon Keeper II folder not found or valid!");
+            return false;
         }
 
-        // If the folder is ok, check the conversion
-        if (folderOk && (AssetsConverter.isConversionNeeded(Main.getSettings()))) {
-            logger.log(Level.INFO, "Need to convert the assets!");
-            saveSetup = true;
-
-            // Convert
-            setLookNFeel();
-            AssetManager assetManager = JmeSystem.newAssetManager(
-                    Thread.currentThread().getContextClassLoader()
-                            .getResource("com/jme3/asset/Desktop.cfg")); // Get temporary asset manager instance since we not yet have one ourselves
-            assetManager.registerLocator(AssetsConverter.getAssetsFolder(), FileLocator.class);
-            DKConverter frame = new DKConverter(getDkIIFolder(), assetManager) {
-                @Override
-                protected void continueOk() {
-                    conversionOk = true;
-                }
-            };
-            openFrameAndWait(frame);
-        } else if (folderOk) {
-            conversionOk = true;
+        // Check if conversion is needed
+        if (AssetsConverter.isConversionNeeded(Main.getSettings())) {
+            logger.log(Level.WARNING, "Asset conversion is needed. Please run the AssetsConverter tool.");
+            return false;
         }
 
-        // If everything is ok, we might need to save the setup
-        boolean result = folderOk && conversionOk;
-        if (result && saveSetup) {
-            SettingUtils.getInstance().saveSettings();
-        }
-
-        return result;
+        return true;
     }
 
     private static void initSettings(Main app) {
@@ -256,77 +207,6 @@ public class Main extends SimpleApplication {
      */
     public static AppSettings getSettings() {
         return SettingUtils.getInstance().getSettings();
-    }
-
-    /**
-     * Sets SWING look and feel
-     */
-    private static void setLookNFeel() {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            System.getLogger(DKFolderSelector.class.getName()).log(Level.ERROR, (String) null, ex);
-        }
-    }
-
-    /**
-     * Opens up a given frame and waits for it to finish
-     *
-     * @param frame the frame to open
-     * @throws InterruptedException
-     */
-    private static void openFrameAndWait(final JFrame frame) throws InterruptedException {
-        frame.setVisible(true);
-
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                synchronized (LOCK) {
-                    while (frame.isVisible()) {
-                        try {
-                            LOCK.wait();
-                        } catch (InterruptedException e) {
-                            logger.log(Level.WARNING, "Lock interrupted!");
-                        }
-                    }
-                }
-            }
-        };
-        t.start();
-
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent arg0) {
-
-                // See if it is allowed
-                if (frame instanceof IFrameClosingBehavior && !((IFrameClosingBehavior) frame).canCloseWindow()) {
-                    return; // You shall not pass!
-                }
-
-                synchronized (LOCK) {
-                    frame.dispose();
-                    LOCK.notify();
-                }
-            }
-        });
-
-        // Special
-        if (frame instanceof DKConverter) {
-            ((DKConverter) frame).startConversion();
-        }
-
-        // Wait the dialog to finish
-        t.join();
     }
 
     @Override

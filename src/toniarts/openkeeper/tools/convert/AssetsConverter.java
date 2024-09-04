@@ -17,7 +17,9 @@
 package toniarts.openkeeper.tools.convert;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.asset.plugins.FileLocator;
 import com.jme3.system.AppSettings;
+import com.jme3.system.JmeSystem;
 import java.io.File;
 import java.io.IOException;
 import java.lang.System.Logger;
@@ -41,6 +43,7 @@ import toniarts.openkeeper.tools.convert.conversion.task.IConversionTask;
 import toniarts.openkeeper.tools.convert.conversion.task.IConversionTaskUpdate;
 import toniarts.openkeeper.tools.convert.map.KwdFile;
 import toniarts.openkeeper.utils.PathUtils;
+import toniarts.openkeeper.utils.SettingUtils;
 
 /**
  *
@@ -99,9 +102,9 @@ public abstract class AssetsConverter implements IConversionTaskUpdate {
         private final int version;
         private final ConvertProcess[] dependencies;
     }
-    
+
     private static final Logger logger = System.getLogger(AssetsConverter.class.getName());
-    
+
     private static final boolean OVERWRITE_DATA = true; // Not exhausting your SDD :) or our custom graphics
     private static final String ASSETS_FOLDER = "assets" + File.separator + "Converted";
     private static final String ABSOLUTE_ASSETS_FOLDER = getCurrentFolder() + ASSETS_FOLDER + File.separator;
@@ -114,16 +117,57 @@ public abstract class AssetsConverter implements IConversionTaskUpdate {
     public static final String MAP_THUMBNAILS_FOLDER = "Thumbnails";
     private static final String INTERFACE_FOLDER = "Interface" + File.separator;
     public static final String MOUSE_CURSORS_FOLDER = INTERFACE_FOLDER + "Cursors";
-    public static final String FONTS_FOLDER = INTERFACE_FOLDER + "Fonts";
-    public static final String TEXTS_FOLDER = INTERFACE_FOLDER + "Texts";
+    private static final String FONTS_FOLDER = INTERFACE_FOLDER + "Fonts";
+    private static final String TEXTS_FOLDER = INTERFACE_FOLDER + "Texts";
     public static final String PATHS_FOLDER = INTERFACE_FOLDER + "Paths";
-    
+
     private final String dungeonKeeperFolder;
     private final AssetManager assetManager;
 
     public AssetsConverter(String dungeonKeeperFolder, AssetManager assetManager) {
         this.dungeonKeeperFolder = dungeonKeeperFolder;
         this.assetManager = assetManager;
+    }
+
+    public static void main(String[] args) {
+
+        String dk2Folder = args.length > 0 ? args[0] : PathUtils.getDKIIFolder();
+
+        // First and foremost, the folder
+        if (!PathUtils.checkDkFolder(dk2Folder)) {
+            logger.log(Level.ERROR, "DKII folder not found or valid!");
+            return;
+        }
+
+        // If the folder is ok, check the conversion
+        if (!AssetsConverter.isConversionNeeded(SettingUtils.getInstance().getSettings())) {
+            logger.log(Level.INFO, "Assets are up-to-date!");
+            return;
+        }
+
+        logger.log(Level.INFO, "Need to convert the assets!");
+
+        var assetManager = JmeSystem.newAssetManager(Thread.currentThread().getContextClassLoader().getResource("com/jme3/asset/Desktop.cfg"));
+        assetManager.registerLocator(AssetsConverter.getAssetsFolder(), FileLocator.class);
+
+        var converter = new AssetsConverter(dk2Folder, assetManager) {
+            @Override
+            public void onUpdateStatus(Integer currentProgress, Integer totalProgress, ConvertProcess process) {
+                System.out.printf("Converting %s: %d/%d\n", process, currentProgress, totalProgress);
+            }
+
+            @Override
+            public void onComplete(ConvertProcess process) {
+                System.out.printf("Completed %s\n", process);
+            }
+
+            @Override
+            public void onError(Exception ex, ConvertProcess process) {
+                System.err.printf("Error in %s: %s\n", process, ex.getMessage());
+            }
+        };
+        converter.convertAssets();
+        SettingUtils.getInstance().saveSettings();
     }
 
     /**
