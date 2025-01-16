@@ -16,10 +16,10 @@
  */
 package toniarts.openkeeper.tools.convert.map;
 
-import java.awt.Color;
 import java.util.EnumSet;
 import javax.annotation.Nullable;
 import toniarts.openkeeper.tools.convert.IFlagEnum;
+import toniarts.openkeeper.utils.Color;
 import toniarts.openkeeper.world.effect.IEffect;
 
 /**

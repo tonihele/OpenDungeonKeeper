@@ -17,7 +17,7 @@
 package toniarts.openkeeper.game.controller.room;
 
 import com.simsilica.es.EntityId;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 
 /**
  * Signifies that a room generates entities

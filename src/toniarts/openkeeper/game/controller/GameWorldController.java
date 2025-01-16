@@ -21,7 +21,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.util.SafeArrayList;
 import com.simsilica.es.EntityData;
 import com.simsilica.es.EntityId;
-import java.awt.Point;
 import java.lang.System.Logger.Level;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -82,6 +81,7 @@ import toniarts.openkeeper.tools.convert.map.Terrain;
 import toniarts.openkeeper.tools.convert.map.Tile;
 import toniarts.openkeeper.tools.convert.map.Trap;
 import toniarts.openkeeper.tools.convert.map.Variable;
+import toniarts.openkeeper.utils.Point;
 import toniarts.openkeeper.utils.WorldUtils;
 
 /**
@@ -713,7 +713,7 @@ public class GameWorldController implements IGameWorldController, IPlayerActions
             playerHandControl.pop();
 
             // Stuff drop differently
-            IRoomController roomController = mapController.getRoomControllerByCoordinates(tile.getLocation());
+            IRoomController roomController = mapController.getRoomControllerByCoordinates(tile);
             if (entityData.getComponent(entity, CreatureComponent.class) != null) {
                 dropCreature(roomController, entity, tile, coordinates, playerId);
             } else {

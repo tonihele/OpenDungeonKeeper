@@ -16,7 +16,7 @@
  */
 package toniarts.openkeeper.game.controller.room;
 
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.HashSet;
 import java.util.Set;
 import toniarts.openkeeper.common.RoomInstance;

@@ -16,7 +16,7 @@
  */
 package toniarts.openkeeper.game.trigger;
 
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.util.EnumSet;

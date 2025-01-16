@@ -17,7 +17,7 @@
 package toniarts.openkeeper.game.navigation;
 
 import com.badlogic.gdx.ai.pfa.GraphPath;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import toniarts.openkeeper.game.map.IMapTileInformation;
 import toniarts.openkeeper.game.navigation.pathfinding.INavigable;
 

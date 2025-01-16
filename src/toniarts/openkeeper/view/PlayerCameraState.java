@@ -31,7 +31,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Spatial;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.HashSet;
 import java.util.Set;
 import toniarts.openkeeper.Main;

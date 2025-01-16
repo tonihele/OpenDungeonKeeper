@@ -17,7 +17,7 @@
 package toniarts.openkeeper.view.map;
 
 import com.jme3.math.FastMath;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.List;
 
 /**

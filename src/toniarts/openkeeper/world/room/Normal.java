@@ -22,7 +22,7 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.BatchNode;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.Arrays;
 import java.util.EnumSet;
 import toniarts.openkeeper.utils.AssetUtils;

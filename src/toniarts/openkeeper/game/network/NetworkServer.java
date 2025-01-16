@@ -30,7 +30,7 @@ import com.jme3.network.service.rpc.RpcHostedService;
 import com.simsilica.es.base.DefaultEntityData;
 import com.simsilica.es.server.EntityDataHostedService;
 import com.simsilica.ethereal.EtherealHost;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;

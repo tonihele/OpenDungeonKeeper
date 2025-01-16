@@ -19,7 +19,7 @@ package toniarts.openkeeper.view.map.construction.room;
 import com.jme3.asset.AssetManager;
 import com.jme3.scene.BatchNode;
 import com.jme3.scene.Node;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

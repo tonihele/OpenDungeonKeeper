@@ -24,7 +24,7 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Parameters;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
-import java.awt.Color;
+import toniarts.openkeeper.utils.Color;
 
 /**
  * Draws a kinda progress effect image on top of a Nifty element

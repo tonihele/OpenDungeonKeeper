@@ -19,7 +19,6 @@ package toniarts.openkeeper.utils;
 import com.badlogic.gdx.math.Vector2;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import toniarts.openkeeper.game.data.ActionPoint;

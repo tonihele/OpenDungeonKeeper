@@ -17,7 +17,7 @@
 package toniarts.openkeeper.game.controller.room;
 
 import com.jme3.math.FastMath;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import toniarts.openkeeper.game.controller.IObjectsController;
 import toniarts.openkeeper.tools.convert.map.KwdFile;
 

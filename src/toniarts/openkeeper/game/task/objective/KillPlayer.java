@@ -18,7 +18,6 @@ package toniarts.openkeeper.game.task.objective;
 
 import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.jme3.math.Vector2f;
-import java.awt.Point;
 import java.util.Iterator;
 import java.util.List;
 import toniarts.openkeeper.game.controller.ILevelInfo;
@@ -29,6 +28,7 @@ import toniarts.openkeeper.game.navigation.INavigationService;
 import toniarts.openkeeper.game.task.TaskType;
 import toniarts.openkeeper.tools.convert.map.Terrain;
 import toniarts.openkeeper.tools.convert.map.Thing;
+import toniarts.openkeeper.utils.Point;
 import toniarts.openkeeper.utils.WorldUtils;
 
 /**

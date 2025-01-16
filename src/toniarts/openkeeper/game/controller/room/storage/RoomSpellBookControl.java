@@ -18,7 +18,7 @@ package toniarts.openkeeper.game.controller.room.storage;
 
 import com.jme3.math.Vector3f;
 import com.simsilica.es.EntityId;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

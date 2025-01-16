@@ -18,16 +18,14 @@ package toniarts.openkeeper.game.controller.room;
 
 import com.jme3.math.Vector3f;
 import com.simsilica.es.EntityId;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import toniarts.openkeeper.game.controller.IObjectsController;
-import static toniarts.openkeeper.game.controller.room.AbstractRoomController.hasSameTile;
 import toniarts.openkeeper.tools.convert.map.KwdFile;
+import toniarts.openkeeper.utils.Point;
 import toniarts.openkeeper.utils.WorldUtils;
-import toniarts.openkeeper.view.map.MapViewController;
 import toniarts.openkeeper.view.map.WallSection;
 
 /**

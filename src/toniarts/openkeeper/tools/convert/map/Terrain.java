@@ -16,11 +16,11 @@
  */
 package toniarts.openkeeper.tools.convert.map;
 
-import java.awt.Color;
 import java.util.EnumSet;
 import toniarts.openkeeper.game.data.IFpsSoundable;
 import toniarts.openkeeper.game.data.ISoundable;
 import toniarts.openkeeper.tools.convert.IFlagEnum;
+import toniarts.openkeeper.utils.Color;
 
 /**
  * Container class for the Terrain & TerrainBlock

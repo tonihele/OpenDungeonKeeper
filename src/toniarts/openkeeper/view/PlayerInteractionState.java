@@ -39,7 +39,7 @@ import com.simsilica.es.EntityData;
 import com.simsilica.es.EntityId;
 import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.elements.Element;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.HashSet;
 import java.util.Set;
 import toniarts.openkeeper.Main;

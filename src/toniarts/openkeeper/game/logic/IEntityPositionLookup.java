@@ -17,7 +17,7 @@
 package toniarts.openkeeper.game.logic;
 
 import com.simsilica.es.EntityId;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.List;
 import java.util.Set;
 import toniarts.openkeeper.game.controller.entity.IEntityController;

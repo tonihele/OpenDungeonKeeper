@@ -17,7 +17,7 @@
 package toniarts.openkeeper.game.data;
 
 import com.jme3.math.Vector2f;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;

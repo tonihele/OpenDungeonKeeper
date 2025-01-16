@@ -19,7 +19,7 @@ package toniarts.openkeeper.game.logic;
 import com.jme3.math.Vector2f;
 import com.jme3.util.SafeArrayList;
 import com.simsilica.es.EntityId;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

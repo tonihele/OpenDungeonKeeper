@@ -6,7 +6,7 @@
 package toniarts.openkeeper.game.controller;
 
 import com.jme3.math.Vector2f;
-import java.awt.Point;
+import toniarts.openkeeper.utils.Point;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
